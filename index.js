@@ -125,7 +125,7 @@ app.get('/total', function(req, res) {
 });
 
 app.listen(PORT, function () {
-    console.log(`Listening on ${ PORT }`));
+    console.log(`Listening on ${ PORT }`);
 });
 
 
