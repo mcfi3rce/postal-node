@@ -1,7 +1,7 @@
 // server.js
 // load the things we need
 var express = require('express'),
-    bodyParser = require('body-parser'),
+//    bodyParser = require('body-parser'),
     app = express();
 
 // set the view engine to ejs
