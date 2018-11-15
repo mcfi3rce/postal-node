@@ -1,17 +1,10 @@
 // server.js
 // load the things we need
 var express = require('express'),
-//    bodyParser = require('body-parser'),
     app = express();
-
+const PORT = process.env.PORT || 5000
 // set the view engine to ejs
 app.set('view engine', 'ejs');
-
-// allow body parser
-//app.use(bodyParser.json());
-//app.use(bodyParser.urlencoded({
-//  extended: true
-//}));
 
 // use res.render to load up an ejs view file
 
@@ -131,11 +124,8 @@ app.get('/total', function(req, res) {
     
 });
 
-var server = app.listen(process.env.PORT || 5000, function () {
-  var port = server.address().port;
-  console.log("Express is working on port " + port);
+app.listen(PORT, function () {
+    console.log(`Listening on ${ PORT }`));
 });
 
-//app.listen(8081);
-//console.log('8081 is the magic port');
 
