@@ -1,10 +1,15 @@
 // server.js
 // load the things we need
+const PORT = process.env.PORT || 5000;
 var express = require('express'),
     app = express();
-const PORT = process.env.PORT || 5000
+
 // set the view engine to ejs
-app.set('view engine', 'ejs');
+app
+    .use(express.static(path.join(__dirname, 'public'))),   
+    .set('views', path.join(__dirname, 'views'))
+    .set('view engine', 'ejs')
+    .listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
 // use res.render to load up an ejs view file
 
@@ -123,9 +128,3 @@ app.get('/total', function(req, res) {
     
     
 });
-
-app.listen(PORT, function () {
-    console.log(`Listening on ${ PORT }`);
-});
-
-
