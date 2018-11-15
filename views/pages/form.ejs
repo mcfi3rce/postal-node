@@ -1,0 +1,52 @@
+<!-- views/pages/about.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head %>
+</head>
+<body class="container">
+
+<header>
+    <% include ../partials/header %>
+</header>
+
+<main>
+<div class="row">
+    <div class="col-sm-8">    
+        <div class="jumbotron">
+            <h1>USPS Package Calculator</h1>
+            <p>Please make your choices</p>
+        </div>
+    </div>
+
+    <div class="col-sm-4">        
+        <div class="well">
+            <h3>Package Options</h3>
+            <form action="/total" method="get">
+                <div class="form-group">
+                    <label for="weight">Weight</label>
+                    <input type="number" class="form-control" id="weight" name="weight" placeholder="0.0 lbs" step=".01" min ="0">
+                </div>
+                
+                <label for="mailtype">Type of Mail</label>
+                <select name="package">
+                  <option>Letters (Stamped)</option>
+                  <option>Letters (Metered)</option>
+                  <option>Large Envelopes (Flats)</option>
+                  <option>First-Class Package Service—Retail</option>
+                </select>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+
+</div>
+</main>
+
+<footer>
+    <% include ../partials/footer %>
+</footer>
+
+</body>
+</html>

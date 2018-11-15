@@ -1,0 +1,34 @@
+<!-- views/pages/about.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head %>
+</head>
+<body class="container">
+
+<header>
+    <% include ../partials/header %>
+</header>
+
+<main>
+<div class="row">
+    <div class="col-sm-8">    
+        <div class="jumbotron">
+            <h1>Order Details</h1>
+            <h2>Delivery Details</h2>
+            <p>Weight: <%= weight %> oz.</p>
+            <p>Type: <%= mailType %></p>
+            <h2>Total</h2>
+            <p>$<%= total %></p>
+        </div>
+    </div>
+</div>
+</main>
+
+<footer>
+    <% include ../partials/footer %>
+</footer>
+
+</body>
+</html>
