@@ -131,6 +131,11 @@ app.get('/total', function(req, res) {
     
 });
 
-app.listen(8081);
-console.log('8081 is the magic port');
+var server = app.listen(process.env.PORT || 5000, function () {
+  var port = server.address().port;
+  console.log("Express is working on port " + port);
+});
+
+//app.listen(8081);
+//console.log('8081 is the magic port');
 
