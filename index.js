@@ -1,6 +1,7 @@
 // server.js
 // load the things we need
 const PORT = process.env.PORT || 5000;
+const path = require('path');
 var express = require('express'),
     app = express();
 
