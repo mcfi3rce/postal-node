@@ -7,9 +7,9 @@ var express = require('express'),
 // set the view engine to ejs
 app
     .use(express.static(path.join(__dirname, 'public'))),   
-    .set('views', path.join(__dirname, 'views'))
-    .set('view engine', 'ejs')
-    .listen(PORT, () => console.log(`Listening on ${ PORT }`))
+    .set('views', path.join(__dirname, 'views')),
+    .set('view engine', 'ejs'),
+    .listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
 // use res.render to load up an ejs view file
 
