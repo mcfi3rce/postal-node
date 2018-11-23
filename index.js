@@ -34,6 +34,11 @@ app.get('/about', function(req, res) {
     res.render('pages/about');
 });
 
+app.get('/books', function(req, res) {
+    res.render('pages/about');
+});
+
+
 app.get('/package', function(req, res) {
     res.render('pages/form');
 });
