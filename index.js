@@ -35,7 +35,7 @@ app.get('/about', function(req, res) {
 });
 
 app.get('/books', function(req, res) {
-    res.render('pages/about');
+    res.render('pages/books');
 });
 
 
