@@ -1,5 +1,7 @@
-// server.js
-// load the things we need
+/********************************************************************
+* SERVER SETUP
+* This is all the setup necessary to get the server up and running.
+*********************************************************************/
 const PORT = process.env.PORT || 5000;
 const path = require('path');
 var express = require('express'),
@@ -12,6 +14,10 @@ app
     .set('view engine', 'ejs')
     .listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
+/********************************************************************
+* DATABASE REQUESTS
+* This section has all the calls to the database for the data that is * needed. 
+*********************************************************************/
 // Connect to the db
 const { Pool } = require("pg");
 const connectionString = process.env.DATABASE_URL || "postgres://mcfi3rce:safe@localhost:5432/booklife";
@@ -28,12 +34,12 @@ function getBooks(request, response) {
 		// This is the callback function that will be called when the DB is done.
 		// The job here is just to send it back.
 
-		// Make sure we got a row with the person, then prepare JSON to send back
+		// Make sure we got the books and send a response back
 		if (error || result == null) {
 			response.status(500).json({success: false, data: error});
 		} else {
-			var person = result;
-			response.status(200).json(result);
+			var books = result.rows;
+            return JSON.stringify(books);
 		}
 	});
 }
@@ -67,6 +73,108 @@ function getBooksFromDb(id, callback) {
 
 }  // end of getBooksFromDb
 
+// This function handles requests to the /login endpoint
+function getUser(request, response) {
+	// This is the original user
+    var id = 1;
+    
+	getUserFromDb(id, function(error, result) {
+		// This is the callback function that will be called when the DB is done.
+		// The job here is just to send it back.
+
+		// Make sure we got the books and send a response back
+		if (error || result == null || result.length != 1) {
+			response.status(500).json({success: false, data: "Incorrect Login Info"});
+		} else {
+			var user = result [0];
+            response.status(200).json(user);
+            return user;
+		}
+	});
+}
+
+// Get the User data, in this case we will spoof the login for now
+// This function gets books
+function getUserFromDb (id, callback) {
+	console.log("Accessing User Data");
+
+	// Set up the SQL that we will use for our query. Note that we can make
+	// use of parameter placeholders just like with PHP's PDO.
+	var sql = "SELECT username, password, email FROM public.user WHERE id = $1::int";
+    
+    // this gets the current user
+    params = [id];
+    
+	// This runs the query, and then calls the provided anonymous callback function
+	// with the results.
+	pool.query(sql, params, function(err, result) {
+		// If an error occurred...
+		if (err) {
+			console.log("Error in query: ")
+			console.log(err);
+			callback(err, null);
+		}
+
+		// Log this to the console for debugging purposes.
+		console.log("Found result: " + JSON.stringify(result.rows));
+
+		callback(null, result.rows);
+	});
+
+}  // end of getBooksFromDb
+
+// This function gets reviews for a particular book
+function getReviewsFromDb(id, callback) {
+	console.log("Getting reviews from DB");
+
+	// Set up the SQL that we will use for our query. Note that we can make
+	// use of parameter placeholders just like with PHP's PDO.
+	var sql = "SELECT * from public.books_read WHERE book_id = $1::int";
+    
+    // this gets the book that has been selected user
+    params = [id];
+    
+	// This runs the query, and then calls the provided anonymous callback function
+	// with the results.
+	pool.query(sql, params, function(err, result) {
+		// If an error occurred...
+		if (err) {
+			console.log("Error in query: ")
+			console.log(err);
+			callback(err, null);
+		}
+
+		// Log this to the console for debugging purposes.
+		console.log("Found review result: " + JSON.stringify(result.rows));
+
+		callback(null, result.rows);
+	});
+
+}  // end of getBooksFromDb
+
+function getReviews(request, response) {
+	// This will be set to the user eventually
+    var id = 1;
+    
+	getReviewsFromDb(id, function(error, result) {
+		// This is the callback function that will be called when the DB is done.
+		// The job here is just to send it back.
+
+		// Make sure we got the books and send a response back
+		if (error || result == null) {
+			response.status(500).json({success: false, data: error});
+		} else {
+			var reviews = result.rows;
+            response.status(200).json(reviews);
+            return JSON.stringify(reviews);
+		}
+	});
+}
+
+/********************************************************************
+* ENDPOINTS
+* This section has all the endpoints that are being exposed, so far I * have the books, the user info, and the reviews
+*********************************************************************/
 // use res.render to load up an ejs view file
 // index page 
 app.get('/', function(req, res) {
@@ -88,11 +196,28 @@ app.get('/about', function(req, res) {
     res.render('pages/about');
 });
 
+// list all books in the database
 app.get('/books', function(req, res) {
-    getBooks(req, res);
+    var books = getBooks(req, res);
+    console.log("Returned: " + books);
 });
 
+// authentication
+app.get('/login', function(req, res) {
+    var user = getUser(req, res);
+    console.log("Returned: " + user);
+});
 
+// see reviews
+app.get('/review', function(req, res) {
+    var reviews = getReviews(req, res);
+    console.log("Returned: " + reviews);
+});
+
+/********************************************************************
+* PONDER PROVE 09
+* This section is what I used to calculate package cost.
+*********************************************************************/
 app.get('/package', function(req, res) {
     res.render('pages/form');
 });
