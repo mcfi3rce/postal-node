@@ -7,9 +7,12 @@ const path = require('path');
 var express = require('express'),
     app = express();
 
+const bodyParser = require('body-parser');
+
 // set the view engine to ejs
 app
-    .use(express.static(path.join(__dirname, 'public')))   
+    .use(express.static(path.join(__dirname, 'public')))
+    .use(bodyParser.urlencoded({ extended: false }))
     .set('views', path.join(__dirname, 'views'))
     .set('view engine', 'ejs')
     .listen(PORT, () => console.log(`Listening on ${ PORT }`));
@@ -170,6 +173,59 @@ function getReviews(request, response) {
 		}
 	});
 }
+// This function gets reviews for a particular book
+function updateReview(text, id, book_id, callback) {
+	console.log("Getting reviews from DB");
+
+	// Set up the SQL that we will use for our query. Note that we can make
+	// use of parameter placeholders just like with PHP's PDO.
+	var sql = "UPDATE public.books_read SET review = $1::text WHERE user_id = $2::int AND book_id = $3::int;";
+    
+    // this gets the book that has been selected user
+    params = [text, id, book_id];
+    
+	// This runs the query, and then calls the provided anonymous callback function
+	// with the results.
+	pool.query(sql, params, function(err, result) {
+		// If an error occurred...
+		if (err) {
+			console.log("Error in query: ")
+			console.log(err);
+			callback(err, null);
+		}
+
+		// Log this to the console for debugging purposes.
+		console.log("Found review result: " + JSON.stringify(result.rows));
+
+		callback(null, result.rows);
+	});
+
+}  // end of getBooksFromDb
+
+function editComment(id, book_id, request, response) {
+	// This will be set to the user eventually
+    const text = request.body.data;
+    console.log(text);
+    
+	updateReview(text, id, book_id, function(error, result) {
+		// This is the callback function that will be called when the DB is done.
+		// The job here is just to send it back.
+
+		// Make sure we got the books and send a response back
+		if (error || result == null) {
+			response.status(500).json({success: false, data: error});
+		} else {
+			var reviews = result.rows;
+            response.status(200).json(reviews);
+            return JSON.stringify(reviews);
+		}
+	});
+    
+}
+
+app.post('/data', (request, response) => {
+    editComment(1, 1, request, response);
+});
 
 /********************************************************************
 * ENDPOINTS
@@ -195,6 +251,11 @@ app.get('/', function(req, res) {
 app.get('/about', function(req, res) {
     res.render('pages/about');
 });
+
+app.get('/post', function(req, res) {
+    res.render('pages/post');
+});
+
 
 // list all books in the database
 app.get('/books', function(req, res) {
