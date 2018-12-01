@@ -16,7 +16,14 @@
         <h1>This is great</h1>
         <p>Welcome to templating using EJS</p>
     </div>
-    <% include ../partials/variable %>
+    <div class="container-fluid" id="bookContainer">
+    <div class="row" id="bookDisplay">
+    </div>      
+    </div>
+    <div id="bookReview" style="display: none;">
+        <% include ../partials/review %>        
+    </div>
+    
 </main>
 
 <footer>

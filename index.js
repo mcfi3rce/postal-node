@@ -31,9 +31,9 @@ const pool = new Pool({connectionString: connectionString});
 // This function handles requests to the /books endpoint
 function getBooks(request, response) {
 	// This will be set to the user eventually
-    var id = 1;
+    var search = request.query.search
     
-	getBooksFromDb(id, function(error, result) {
+	getBooksFromDb(search, function(error, result) {
 		// This is the callback function that will be called when the DB is done.
 		// The job here is just to send it back.
 
@@ -41,19 +41,18 @@ function getBooks(request, response) {
 		if (error || result == null) {
 			response.status(500).json({success: false, data: error});
 		} else {
-			var books = result.rows;
-            return JSON.stringify(books);
+			response.json(result);
 		}
 	});
 }
 
 // This function gets books
-function getBooksFromDb(id, callback) {
+function getBooksFromDb(search, callback) {
 	console.log("Getting books from DB");
 
 	// Set up the SQL that we will use for our query. Note that we can make
 	// use of parameter placeholders just like with PHP's PDO.
-	var sql = "SELECT * from public.book";
+	var sql = "SELECT * from public.book WHERE title LIKE '%" + search + "%'";
     
     // we will use this later for filtering
     params = null;
@@ -167,9 +166,7 @@ function getReviews(request, response) {
 		if (error || result == null) {
 			response.status(500).json({success: false, data: error});
 		} else {
-			var reviews = result.rows;
-            response.status(200).json(reviews);
-            return JSON.stringify(reviews);
+            response.json(result);
 		}
 	});
 }
@@ -259,8 +256,8 @@ app.get('/post', function(req, res) {
 
 // list all books in the database
 app.get('/books', function(req, res) {
-    var books = getBooks(req, res);
-    console.log("Returned: " + books);
+    console.log(req.query.search);
+    getBooks(req, res);
 });
 
 // authentication
@@ -271,8 +268,7 @@ app.get('/login', function(req, res) {
 
 // see reviews
 app.get('/review', function(req, res) {
-    var reviews = getReviews(req, res);
-    console.log("Returned: " + reviews);
+    getReviews(req, res);
 });
 
 /********************************************************************
