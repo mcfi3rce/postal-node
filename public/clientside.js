@@ -3,6 +3,13 @@ function loadBooks() {
     
     $.get("/books", {search:search}, function(data){
         console.log("Back from the server with:");
+        $("#login").hide();
+        $("#bookContainer").show();
+        $("#bookDisplay").show();        
+        $('#loginStyle').remove();
+        
+         $("head").append($("<link rel='stylesheet' href='stylesheets/book-list.css' type='text/css' id='booklistStyle'/>"));
+         $("head").append($("<link rel='stylesheet' href='stylesheets/index.css' type='text/css' id='indexStyle'/>" ));
         
         data.forEach(function (book){
             console.log(book.cover_art);
@@ -19,15 +26,15 @@ function loadBooks() {
 }
 
 function loadDetails() {
-    
     console.log("Loading details...");
     // Setup for reloading the page dynamically
     $("#bookContainer").hide();
     $("#bookReview").show();
+    $('#booklistStyle').remove();
     
     console.log("BOOK_ID:" + $("book_id").val);
     
-    $("head").append($("<link rel='stylesheet' href='stylesheets/seeDetails.css' type='text/css'/>"));
+    $("head").append($("<link rel='stylesheet' href='stylesheets/seeDetails.css' type='text/css' id='reviewStyle'/>" ));
     
     
     // This is where we will get the data and load it into the page
@@ -44,3 +51,4 @@ function loadDetails() {
     
     
 }
+
