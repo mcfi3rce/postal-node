@@ -12,6 +12,8 @@ const bodyParser = require('body-parser');
 // We are going to use sessions
 var session = require('express-session')
 
+// Connect to docker container
+//var client = require('./connection.js');
 
 // set the view engine to ejs
 app
@@ -26,6 +28,23 @@ app
     .set('view engine', 'ejs')
     .listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
+
+///********************************************************************
+//* ELASTICSEARCH TEST
+//* This is all the setup necessary to get the server up and running.
+//*********************************************************************/
+//
+//client.ping({
+//  // ping usually has a 3000ms timeout
+//  requestTimeout: 1000
+//}, function (error) {
+//  if (error) {
+//    console.trace('elasticsearch cluster is down!');
+//  } else {
+//    console.log('All is well');
+//  }
+//});
+//
 /****************************************************************
  * Login Functionality
  ****************************************************************/
@@ -152,6 +171,18 @@ function getUser(request, response) {
 			response.status(500).json({success: false, data: "Incorrect Login Info"});
 		} else {
 			var user = result [0];
+//            client.index({
+//                 index: 'books',
+//                 id: '1',
+//                 type: 'posts',
+//                 body: {
+//                     "PostName": "User Authentication Info",
+//                     "PostType": "AuthLog",
+//                     "PostBody": user,
+//                 }
+//                 }, function(err, resp, status) {
+//                     console.log(resp);
+//            });
             response.status(200).json(user);
             return user;
 		}
