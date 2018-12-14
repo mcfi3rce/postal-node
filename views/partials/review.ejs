@@ -1,90 +1,26 @@
-<!--
-/**********************************************************
-* File: seeDetails.php
-* Author: Adam McPherson
-* 
-* Description: This is the book review page where all the current 
-* reviews will be listed for a book as well as the opportunity to 
-* add a review if logged in.
-***********************************************************/
--->
-
-  <div class="info">
-   <div class="book-cover" id="book-cover">
+<div class="info">
+   <div class="book-cover" id="book-cover">       
    </div>
    <div class="book-info" id="book-info">
-    <h3 id="title">Title</h3>
-    <h3 id="author">Author</h3>
-    <h3 id="publisher">Publisher</h3>
-    <h3 id="isbn">ISBN</h3>
+    <h3>Title</h3>
+    <p id="title"></p>
+    <h3>Author</h3>
+    <p id="author"></p>
+    <h3>Publisher</h3>
+    <p id="publisher"></p>
+    <h3>ISBN</h3>
+    <p id="isbn"></p>
     <br>   
    </div>
 </div>
-<!--
 
-<?php
-    
-try{
-    // Get the Data from the GET
-    
-    if (isset($_GET['book_id'])){
-        
-        $query = 'SELECT display_name, title, review, rating, would_recommend 
-        FROM public.books_read AS b
-        INNER JOIN public.user AS u
-        ON b.user_id = u.id
-        WHERE b.book_id = :book_id';
-        
-        $statement = $db->prepare($query);
-        $statement->bindValue(':book_id', $book_id);
-        $statement->execute();
-        while ($row = $statement->fetch(PDO::FETCH_ASSOC)){
-            echo '<div class="reviews">';
-            echo  '<div class="row blockquote review-item">';
-            echo    '<div class="col-md-3 text-center">';
-            echo      '<img class="rounded-circle reviewer" src="https://standaloneinstaller.com/upload/avatar.png">';
-            echo      '<div class="caption">';
-            echo        "<small>by " . $row['display_name'] . "</small>";
-            echo      '</div>';
-            echo    '</div>';
-            echo    '<div class="col-md-9">';
-            echo      "<h4>" . $row['title'] . "</h4>";
-            echo      '<div class="ratebox text-center" data-id="0" data-rating="5"></div>';
-            echo      "<p class='review-text'>" . $row['review'] . "</p>";
-            echo      "<p class='review-text'> Rating: " . $row['rating'] . "</p>";
-            echo      "</br>";
-            echo      "<p class='review-text'> Would Recommend?: </p>";
-            if ($row['would_recommend']){
-                echo  '<i class="fa fa-thumbs-up"></i>';
-            }
-            else{
-                echo  '<i class="fa fa-thumbs-down"></i>';
-            }            
-            echo    "</div>";                          
-            echo  '</div>' ;  
-            echo '</div>';
-            }
-        } 
-    else {
+<div id="reviews">
+</div>
 
-        echo "ERROR reading GET \n";
-    }
-}
-catch (Exception $ex)
-{
-	// Please be aware that you don't want to output the Exception message in
-	// a production environment
-	echo "Error with DB. Details: $ex";
-	die();
-}
-?>
-
--->
-
-<form action="createReview.php" method="POST" id="myform">
+<form action="/createReview" method="POST" id="myform">
     <div class="form-group">
       <h2>Review This Book</h2>
-       <input type="hidden" name="book_id" value="<?php echo $book_id;?>">
+       <input type="hidden" name="book_id">
         <label for="title">Title:</label>
         <input type="text" class="form-control" rows="1" name="title">
       

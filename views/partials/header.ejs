@@ -13,26 +13,16 @@
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
         <ul class="nav navbar-nav navbar-left">
-            <li onclick="loadBooks()"><a href="#">Books</a></li>
+            <li onclick="getBooks()"><a href="#">Books</a></li>
             <li><a href="/login">Login</a></li>
             <li><a href="/profile">Profile</a></li>
             <li><a href="/reviews">Reviews</a></li>
-<!--
-            <?php
-            if ($_SESSION['logged_in']){
-                echo '<li><a href="logout.php">Logout</a></li>';
-            }
-            else{
-                echo '<li><a href="login.php">Login</a></li>';
-            }
-            ?>
--->
         </ul>
         <div class="navbar-form navbar-right">
             <div class="form-group">
                 <input type="text" id="search" class="form-control" placeholder="Search">
             </div>
-            <button onclick="loadBooks()" class="btn btn-danger">
+            <button onclick="searchBooks()" class="btn btn-danger">
             Submit
             </button>
         </div>
