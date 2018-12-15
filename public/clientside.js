@@ -1,3 +1,18 @@
+//$( document ).ready(function() {
+//    $.get("/login",function(response){
+//        console.log(response);
+//        
+//    })
+//});
+
+function logout(){
+	$.post("/logout");
+	
+	
+	
+}
+
+
 function searchBooks() {
     var search = $("#search").val();
     

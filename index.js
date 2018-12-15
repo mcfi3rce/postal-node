@@ -7,13 +7,34 @@ const path = require('path');
 var express = require('express'),
     app = express();
 
-const bodyParser = require('body-parser');
 // We are going to use sessions
-var session = require('express-session')
+var session = require('express-session');
+
+// This is a middleware function that we can use with any request
+// to make sure the user is logged in.
+function verifyLogin(request, response, next) {
+	console.log(request.session);
+    if (request.session.user) {
+		// They are logged in!
+		// pass things along to the next function
+        console.log("authenticated");
+		next();
+	}
+	else {
+		// They are not logged in
+		// Send back an unauthorized status
+        console.log("Not Logged In");
+		var result = {success:false, message: "Access Denied"};
+		response.render('pages/login');
+	}
+}
+
+const bodyParser = require('body-parser');
 
 // Connect to the controllers
 const bookController = require("./controllers/bookController.js");
 const reviewController = require("./controllers/reviewController.js");
+const authController = require("./controllers/authController.js");
 
 // Connect to docker container
 //var client = require('./connection.js');
@@ -27,27 +48,11 @@ app
         resave: false,
         saveUninitialized: true
     }))
+    .get('*',verifyLogin)
     .set('views', path.join(__dirname, 'views'))
     .set('view engine', 'ejs')
     .listen(PORT, () => console.log(`Listening on ${ PORT }`))
-    .use(verifyLogin);
-
-
-// This is a middleware function that we can use with any request
-// to make sure the user is logged in.
-function verifyLogin(request, response, next) {
-	if (request.session.user) {
-		// They are logged in!
-		// pass things along to the next function
-		next();
-	} else {
-		// They are not logged in
-		// Send back an unauthorized status
-		var result = {succes:false, message: "Access Denied"};
-		response.status(401).json(result);
-	}
-}
-
+    
 // This middleware function simply logs the current request to the server
 function logRequest(request, response, next) {
 	console.log("Received a request for: " + request.url);
@@ -60,56 +65,6 @@ function logRequest(request, response, next) {
 * DATABASE REQUESTS
 * This section has all the calls to the database for the data that is * needed. 
 *********************************************************************/
-
-// This function handles requests to the /login endpoint
-function getUser(request, response) {
-	// This is the original user
-    var id = 1;
-    
-	getUserFromDb(id, function(error, result) {
-		// This is the callback function that will be called when the DB is done.
-		// The job here is just to send it back.
-
-		// Make sure we got the books and send a response back
-		if (error || result == null || result.length != 1) {
-			response.status(500).json({success: false, data: "Incorrect Login Info"});
-		} else {
-			var user = result [0];
-            response.json(user);
-		}
-	});
-}
-
-// Get the User data, in this case we will spoof the login for now
-// This function gets books
-function getUserFromDb (id, callback) {
-	console.log("Accessing User Data");
-
-	// Set up the SQL that we will use for our query. Note that we can make
-	// use of parameter placeholders just like with PHP's PDO.
-	var sql = "SELECT username, password, email FROM public.user WHERE id = $1::int";
-    
-    // this gets the current user
-    params = [id];
-    
-	// This runs the query, and then calls the provided anonymous callback function
-	// with the results.
-	pool.query(sql, params, function(err, result) {
-		// If an error occurred...
-		if (err) {
-			console.log("Error in query: ")
-			console.log(err);
-			callback(err, null);
-		}
-
-		// Log this to the console for debugging purposes.
-		console.log("Found result: " + JSON.stringify(result.rows));
-
-		callback(null, result.rows);
-	});
-
-}  // end of getBooksFromDb
-
 app.post('/data', (request, response) => {
     editComment(1, 1, request, response);
 });
@@ -121,17 +76,9 @@ app.post('/data', (request, response) => {
 // use res.render to load up an ejs view file
 // index page 
 app.get('/', function(req, res) {
-    var drinks = [
-        { name: 'Water', gainz: 0 },
-        { name: 'Protein', gainz: 5 },
-        { name: 'Raw Eggs', gainz: 10 }
-    ];
-    var tagline = "Any code of your own that you haven't looked at for six or more months might as well have been written by someone else.";
-
-    res.render('pages/index', {
-        drinks: drinks,
-        tagline: tagline
-    });
+    sess = req.session;
+    res.render('pages/login');
+	
 });
 
 // about page 
@@ -144,8 +91,8 @@ app.get('/post', function(req, res) {
 });
 
 // Setup our routes
-app.post('/login', handleLogin);
-app.post('/logout', handleLogout);
+app.post('/login', authController.handleLogin);
+app.post('/logout', authController.handleLogout);
 
 
 // list all books in the database
@@ -155,7 +102,8 @@ app.get('/info', bookController.bookInfo);
 
 // authentication
 app.get('/login', function(req, res) {
-    getUser(req, res);
+    session = req.session;
+    res.json(session.user);
 });
 
 // see reviews

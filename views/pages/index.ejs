@@ -5,25 +5,20 @@
 <head>
     <% include ../partials/head %>
 </head>
-<body class="container">
+<body class="container" onload="getBooks()">
 
 <header>
     <% include ../partials/header %>
 </header>
 
 <main>
-    <div class="text-center" style="padding:50px 0">
-     <% include ../partials/login %>
-    </div>
-    
-    <div class="container-fluid" id="bookContainer" style="display: none;">
+    <div class="container-fluid" id="bookContainer">
     <div class="row" id="bookDisplay">
     </div>      
     </div>
     <div id="bookReview" style="display: none;">
         <% include ../partials/review %>        
     </div>
-    
 </main>
 
 <footer>
